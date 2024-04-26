@@ -28,18 +28,39 @@ public class Movement : MonoBehaviour
     IEnumerator Kick()
     {
         anim.SetBool("isKicking", true);
-        yield return new WaitForSeconds(1.2f);
+        yield return new WaitForSeconds(0.6f);
         GetEnemiesInRange();
+        foreach(Transform enemies in enemyList)
+        {
+            //Debug.Log("inimigo na lista");
+            Enemy enemy = enemies.GetComponent<Enemy>();
+
+            if(enemy != null)
+            {
+                enemy.GetHit(20);
+            }
+        }
+        yield return new WaitForSeconds(0.6f);
         anim.SetBool("isKicking", false);
     }
 
     void GetEnemiesInRange()
     {
         enemyList.Clear();
-        foreach(Collider colisor in Phisics.OverlapSphere((transform.position + transform.forward), areaAtk))
+        foreach(Collider colisor in Physics.OverlapSphere((transform.position + transform.forward), areaAtk))
         {
-
+            if(colisor.gameObject.CompareTag("Enemy"))
+            {
+                //Debug.Log("Bateu!");
+                enemyList.Add(colisor.transform);
+            }   
         }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position + transform.forward, areaAtk);
     }
 
     //Movements
