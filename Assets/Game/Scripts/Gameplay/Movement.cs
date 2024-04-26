@@ -4,8 +4,17 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
+    //Components
     [SerializeField] Animator anim;
     [SerializeField] CharacterController controller;
+
+    //Movement
+    private float inputX;
+    private float inputZ;
+    private Vector3 direction;
+    [SerializeField] float moveSpeed;
+
+    //Attack
     [SerializeField] float areaAtk;
     List<Transform> enemyList = new List<Transform>();
 
@@ -17,6 +26,24 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
+        //Movement
+        inputX = Input.GetAxis("Horizontal");
+        inputZ = Input.GetAxis("Vertical");
+        direction = new Vector3(inputX, 0, inputZ);
+
+        //Rotation
+        if(inputX != 0 || inputZ != 0)
+        {
+            anim.SetBool("isRunning", true);
+            Vector3 lookDirection = new Vector3(direction.x, 0, direction.z);
+            transform.rotation = Quaternion.LookRotation(lookDirection);
+        }
+        else
+        {
+            anim.SetBool("isRunning", false);
+        }
+
+        controller.Move(direction * moveSpeed * Time.deltaTime);
         if(Input.GetMouseButtonDown(0))
         {
             StartCoroutine("Kick");
